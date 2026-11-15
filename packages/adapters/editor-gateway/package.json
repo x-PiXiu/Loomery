@@ -1,0 +1,23 @@
+{
+  "name": "@loomery/adapter-editor-gateway",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./renderer": "./src/renderer/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@loomery/adapter-ipc-bridge": "workspace:*",
+    "@loomery/domain": "workspace:*",
+    "@loomery/ports": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.0",
+    "electron": "^38.0.0",
+    "typescript": "^5.6.0"
+  }
+}

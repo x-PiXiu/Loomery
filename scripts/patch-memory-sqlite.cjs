@@ -1,0 +1,14 @@
+// 记忆更新：SQLite 迁移批次
+const fs = require('fs');
+const p = 'C:/Users/29108/.zcode/cli/memories/projects/loomery-3794f0800c2b9453/memory/loomery-agent-editor-project.md';
+const entry = `
+2026-11-01 **SQLite 迁移执行收官（ADR-0023 从"按触发条件"提前落地，用户点名"现在就迁"；181 测试全绿/lint 0，用户需重启）**：①**SqliteMemoryStore**（adapters/memory-store/src/sqlite/sqlite-store.ts，node:sqlite DatabaseSync 同步 API+WAL+synchronous=NORMAL；Electron 38 内置可用已实证无需 flag）。schema：events(threadId,seq PK/id 索引/schemaVersion/turnId/step/type/payload JSON)+thread_meta(折叠元数据：title/createdAt/workspaceRoot/usageTokens/turnIds/maxSeq/eventCount)+facts(全局事实)+artifact_index+meta(标记)。②**折叠语义单一来源**：applyEventToMeta 与 JSON 版 listThreads 逐字段同构（threadCreated 标题/标题后到者胜/threadMoved/usageDelta 累加/turnStarted 去重追加），**双路径重放校验测试锁定**（同一事件流 JSON vs SQLite：loadEvents/listThreads 在全量/GC 后/删除后三态 deepEqual——ADR-0023 要求的验证手段）。③**JSONL→SQLite 导入幂等**（init()，组合根 await）：parseJournalLines 复用（残行/uuid 重复天然容错）→事务 INSERT OR IGNORE→recomputeMeta（从 DB 重算，保证与重放折叠等价）→文件**归档 sessions-imported/ 不删除（可整体回退）**→meta 标记 jsonl_import_done 防重导。④**产物索引后端接缝**：ContentAddressedArtifactStore 加第 4 参 ArtifactIndexBackend（缺省 index.json 文件=现行为，SQLite 引擎注入 sqliteArtifactIndex(db)）——blob 永远留文件。⑤**TaskFactReadModel 依赖反转**：构造改 (loader: {loadEvents}, tasksDir, sigOf?)——JSON 传文件 stat 签名、SQLite 传 eventCount:maxSeq；折叠逻辑单一来源。⑥**bootstrap 引擎选择**：默认 sqlite（动态 import('node:sqlite') 失败自动回退 json+警告），LOOMERY_STORE=json 逃生门；**三留资产解耦**（briefs/artifacts/skills 由 bootstrap 直接构造文件版，不再 (store as JsonMemoryStore) 强转——引擎中立）；exportBundle 改经 loadEvents 序列化（bundle 格式不变）；memoryList 改走可选端口 queryTaskFacts。⑦真机探针 verify-sqlite.cjs（真实数据副本两阶段）：**6 任务/6977 事件全量迁入（残行 0）、1.58MB 最大任务 4257 事件 23 类型完整、usageSum=108.7 万与源一致、任务记忆读模型可用、foldMs=0（JSON 引擎 134ms）、sessions-imported=6 残留 0、二次启动不重导**。⑧坑：@types/node@24 才有 node:sqlite 类型（22 无）；StatementSync.run().changes/COUNT(*) 返回 number|bigint 要 Number() 强转；sel.all() 断言需 as unknown as。docs：ADR-0023 标注已执行、docs/11 加 loomery.db+sessions-imported。
+`;
+fs.appendFileSync(p, entry, 'utf8');
+const ix = 'C:/Users/29108/.zcode/cli/memories/projects/loomery-3794f0800c2b9453/memory/MEMORY.md';
+let s = fs.readFileSync(ix, 'utf8');
+const anchor = '；**探针坑：taskkill /F 不走 close 事件，window-state 验证必须走 windowControl close RPC**；verify-hardening.cjs 三断言 PASS';
+if (!s.includes(anchor)) { console.log('anchor missing'); process.exit(1); }
+s = s.replace(anchor, anchor + '；**11-01 SQLite 迁移执行收官（ADR-0023 提前落地，181 测试/lint 0，用户需重启）**：默认引擎=SqliteMemoryStore（node:sqlite WAL，@types/node24 才有类型），LOOMERY_STORE=json 逃生门；三迁=events/thread_meta/facts/产物索引（ArtifactIndexBackend 接缝，blob 留文件），三留=简报/技能/blob+config/secrets/checkpoints；JSONL→SQLite 导入幂等（parseJournalLines 复用+归档 sessions-imported 可回退+标记防重导）；**折叠语义同构由双路径重放校验测试锁定（全量/GC 后/删除后三态 deepEqual）**；TaskFactReadModel 依赖反转（loader+sigOf 注入）；真机 6 任务/6977 事件迁入 foldMs=0（JSON 134ms）二次启动不重导');
+fs.writeFileSync(ix, s, 'utf8');
+console.log('memory updated');

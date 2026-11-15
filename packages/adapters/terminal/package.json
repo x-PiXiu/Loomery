@@ -1,0 +1,24 @@
+{
+  "name": "@loomery/adapter-terminal",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@loomery/domain": "workspace:*",
+    "@loomery/ports": "workspace:*",
+    "@loomery/adapter-process": "workspace:*",
+    "node-pty": "^1.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.0",
+    "typescript": "^5.6.0",
+    "vitest": "^3.0.0"
+  }
+}

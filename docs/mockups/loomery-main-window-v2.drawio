@@ -1,0 +1,85 @@
+<mxfile host="app.diagrams.net" agent="loomery-design-v2" version="24.0.0">
+  <diagram name="V2-1 调用层级" id="v2-hierarchy">
+    <mxGraphModel dx="1200" dy="800" grid="1" gridSize="10" page="1" pageWidth="1400" pageHeight="880">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+        <mxCell id="k0" value="App 壳（无活动栏 · 三列布局）" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=17;fontStyle=1" vertex="1" parent="1"><mxGeometry x="500" y="30" width="400" height="56" as="geometry"/></mxCell>
+        <mxCell id="k1" value="左栏（双模式侧栏）&#10;240–320px · 可拖拽" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=15" vertex="1" parent="1"><mxGeometry x="140" y="150" width="250" height="64" as="geometry"/></mxCell>
+        <mxCell id="k2" value="中列：对话（主舞台）&#10;⇄ 可与右列互换" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=15;fontStyle=1" vertex="1" parent="1"><mxGeometry x="560" y="150" width="280" height="64" as="geometry"/></mxCell>
+        <mxCell id="k3" value="右列：编辑器&#10;⇄ 可与中列互换" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=15" vertex="1" parent="1"><mxGeometry x="900" y="150" width="280" height="64" as="geometry"/></mxCell>
+        <mxCell id="k4" value="状态栏&#10;阶段/模式/token/回滚" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=15" vertex="1" parent="1"><mxGeometry x="1210" y="150" width="170" height="64" as="geometry"/></mxCell>
+        <mxCell id="k5" value="模式A：任务列表&#10;新建/插件市场/项目分组任务" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=15" vertex="1" parent="1"><mxGeometry x="60" y="300" width="240" height="60" as="geometry"/></mxCell>
+        <mxCell id="k6" value="模式B：文件目录&#10;点「查看文件」进入" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=15" vertex="1" parent="1"><mxGeometry x="320" y="300" width="250" height="60" as="geometry"/></mxCell>
+        <mxCell id="k7" value="消息流&#10;气泡/流式/notice" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=15" vertex="1" parent="1"><mxGeometry x="600" y="300" width="180" height="60" as="geometry"/></mxCell>
+        <mxCell id="k8" value="工具卡 + 审批卡&#10;diff + 接受/拒绝" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=15" vertex="1" parent="1"><mxGeometry x="800" y="300" width="220" height="60" as="geometry"/></mxCell>
+        <mxCell id="k9" value="Composer&#10;模式/发送/停止" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=15" vertex="1" parent="1"><mxGeometry x="600" y="430" width="180" height="60" as="geometry"/></mxCell>
+        <mxCell id="k11" value="标签页 + Monaco" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=15" vertex="1" parent="1"><mxGeometry x="820" y="430" width="180" height="60" as="geometry"/></mxCell>
+        <mxCell id="k12" value="DiffPane" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=15" vertex="1" parent="1"><mxGeometry x="1020" y="430" width="180" height="60" as="geometry"/></mxCell>
+        <mxCell id="k13" value="设置 / 事件时间线（按需浮出，不变）" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#999999;fontSize=14" vertex="1" parent="1"><mxGeometry x="1240" y="430" width="140" height="60" as="geometry"/></mxCell>
+        <mxCell id="k14" value="数据入口（唯一）：LoopEvent 事件泵 → reducer → 视图模型" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=15" vertex="1" parent="1"><mxGeometry x="140" y="620" width="540" height="50" as="geometry"/></mxCell>
+        <mxCell id="k15" value="用户动作（唯一出口）：RPC → main（send/decide/fs/项目与任务管理）" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=15" vertex="1" parent="1"><mxGeometry x="720" y="620" width="540" height="50" as="geometry"/></mxCell>
+        <mxCell id="k16" value="与 v1 差异&#10;1. 移除活动栏——三列即全部&#10;2. 左栏 = ZCode 式任务/项目侧栏，双模式（任务 ⇄ 文件）&#10;3. 中右可互换（互换即 v1 的 IDE 布局，不再单设预设页）&#10;4. 分隔条拖宽，宽度持久化" style="text;html=1;fontSize=15;align=left;verticalAlign=top;spacingTop=4" vertex="1" parent="1"><mxGeometry x="140" y="710" width="560" height="130" as="geometry"/></mxCell>
+        <mxCell id="k17" value="图例：蓝=壳  绿=三列主区  黄=子组件  灰=按需  红=数据流规则" style="text;html=1;fontSize=14;align=left;" vertex="1" parent="1"><mxGeometry x="740" y="710" width="560" height="30" as="geometry"/></mxCell>
+        <mxCell id="ke1" style="edgeStyle=orthogonalEdgeStyle;exitX=0.2;exitY=1;entryX=0.5;entryY=0" edge="1" parent="1" source="k0" target="k1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="ke2" style="edgeStyle=orthogonalEdgeStyle;exitX=0.5;exitY=1;entryX=0.5;entryY=0" edge="1" parent="1" source="k0" target="k2"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="ke3" style="edgeStyle=orthogonalEdgeStyle;exitX=0.8;exitY=1;entryX=0.5;entryY=0" edge="1" parent="1" source="k0" target="k3"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="ke4" style="edgeStyle=orthogonalEdgeStyle;exitX=0.95;exitY=1;entryX=0.5;entryY=0" edge="1" parent="1" source="k0" target="k4"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="ke5" style="edgeStyle=orthogonalEdgeStyle;exitX=0.3;exitY=1;entryX=0.5;entryY=0" edge="1" parent="1" source="k1" target="k5"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="ke6" style="edgeStyle=orthogonalEdgeStyle;exitX=0.7;exitY=1;entryX=0.5;entryY=0" edge="1" parent="1" source="k1" target="k6"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="ke7" style="edgeStyle=orthogonalEdgeStyle;exitX=0.3;exitY=1;entryX=0.5;entryY=0" edge="1" parent="1" source="k2" target="k7"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="ke8" style="edgeStyle=orthogonalEdgeStyle;exitX=0.7;exitY=1;entryX=0.5;entryY=0" edge="1" parent="1" source="k2" target="k8"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="ke9" style="edgeStyle=orthogonalEdgeStyle;exitX=0.2;exitY=1;entryX=0.5;entryY=0" edge="1" parent="1" source="k2" target="k9"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="ke10" style="edgeStyle=orthogonalEdgeStyle;exitX=0.4;exitY=1;entryX=0.5;entryY=0" edge="1" parent="1" source="k3" target="k11"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="ke11" style="edgeStyle=orthogonalEdgeStyle;exitX=0.8;exitY=1;entryX=0.5;entryY=0" edge="1" parent="1" source="k3" target="k12"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="ke12" value="文件树挂左栏模式B" style="edgeStyle=orthogonalEdgeStyle;dashed=1;exitX=0;exitY=0.5;entryX=1;entryY=0.5;fontSize=13" edge="1" parent="1" source="k3" target="k6"><mxGeometry relative="1" as="geometry"/></mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram name="V2-2 主窗口三列" id="v2-main">
+    <mxGraphModel dx="1200" dy="800" grid="1" gridSize="10" page="1" pageWidth="1440" pageHeight="940">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+        <mxCell id="m0" value="Loomery 主窗口（三列 · 左任务/项目 · 中对话 · 右编辑器）" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=16;fontStyle=1;verticalAlign=top;spacingTop=6" vertex="1" parent="1"><mxGeometry x="20" y="20" width="1400" height="860" as="geometry"/></mxCell>
+        <mxCell id="m1" value="＋ 新建任务　Ctrl+N&#10;🧩 插件市场（P2 入口）" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=15;align=left;spacingLeft=10;verticalAlign=middle" vertex="1" parent="1"><mxGeometry x="40" y="60" width="290" height="70" as="geometry"/></mxCell>
+        <mxCell id="m2" value="任务列表　　　　　　　　　🔍 筛选" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=15;align=left;spacingLeft=10" vertex="1" parent="1"><mxGeometry x="40" y="140" width="290" height="34" as="geometry"/></mxCell>
+        <mxCell id="m3" value="▾ 📁 Loomery　　　　　[⋯][☰][＋]&#10;　　● Agent 主窗口三列设计　　3分&#10;　　○ 事件管道重构　　　　　2小时&#10;▸ 📁 Sightline　[⋯][☰][＋]&#10;　　○ 架构与规格审查　　　　18天&#10;▸ 📁 知识库　[⋯][☰][＋]&#10;　　○ 第四期分镜优化　　　　2小时&#10;　　○ 简历制作　　　　　　　6天&#10;　　……显示更多" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#cccccc;fontSize=15;align=left;spacingLeft=10;verticalAlign=top;spacingTop=8" vertex="1" parent="1"><mxGeometry x="40" y="184" width="290" height="500" as="geometry"/></mxCell>
+        <mxCell id="m4" value="👤 mezyy327　[⇄] [⚙设置]" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#999999;fontSize=15;align=left;spacingLeft=10" vertex="1" parent="1"><mxGeometry x="40" y="694" width="290" height="44" as="geometry"/></mxCell>
+        <mxCell id="m5" value="⇔" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=14;verticalAlign=middle" vertex="1" parent="1"><mxGeometry x="334" y="60" width="10" height="678" as="geometry"/></mxCell>
+        <mxCell id="m6" value="中列：对话　[⇄ 与编辑器互换位置]" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=15;align=left;spacingLeft=10" vertex="1" parent="1"><mxGeometry x="350" y="60" width="520" height="30" as="geometry"/></mxCell>
+        <mxCell id="m7" value="消息流…&#10;· 用户气泡&#10;· 流式回复&#10;· 工具卡 / 审批卡（同 V1-P3 细节）&#10;· Checkpoint 横幅 / Turn 页脚" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#cccccc;fontSize=15;align=left;spacingLeft=10;verticalAlign=top;spacingTop=8" vertex="1" parent="1"><mxGeometry x="350" y="96" width="520" height="540" as="geometry"/></mxCell>
+        <mxCell id="m8" value="Composer：[计划|编辑|解释] · @引用 · 发送/停止" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=15;align=left;spacingLeft=10" vertex="1" parent="1"><mxGeometry x="350" y="646" width="520" height="92" as="geometry"/></mxCell>
+        <mxCell id="m9" value="⇔" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=14;verticalAlign=middle" vertex="1" parent="1"><mxGeometry x="874" y="60" width="10" height="678" as="geometry"/></mxCell>
+        <mxCell id="m10" value="右列：编辑器" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=15;align=left;spacingLeft=10" vertex="1" parent="1"><mxGeometry x="890" y="60" width="510" height="30" as="geometry"/></mxCell>
+        <mxCell id="m11" value="标签页：config.ts ● | main.ts" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=15;align=left;spacingLeft=10" vertex="1" parent="1"><mxGeometry x="890" y="96" width="510" height="30" as="geometry"/></mxCell>
+        <mxCell id="m12" value="Monaco 编辑器（DiffPane 以标签打开）" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#cccccc;fontSize=15;align=left;spacingLeft=10;verticalAlign=top;spacingTop=8" vertex="1" parent="1"><mxGeometry x="890" y="132" width="510" height="606" as="geometry"/></mxCell>
+        <mxCell id="m13" value="状态栏：阶段 · 模式 · 模型 · token · 挂起审批 · ↩ 回滚" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#999999;fontSize=14;align=left;spacingLeft=10" vertex="1" parent="1"><mxGeometry x="40" y="800" width="1360" height="34" as="geometry"/></mxCell>
+        <mxCell id="m14" value="布局规则&#10;1. 三列间两条 ⇔ 分隔条：拖拽调宽（最小/最大钳制），宽度持久化&#10;2. 中↔右互换：点中列头 [⇄]；互换后编辑器居中、对话靠右（即 V1 的 IDE 形态）&#10;3. 点任务行 → 中列载入该会话；当前任务高亮●&#10;4. 去掉活动栏与独立文件树面板：文件树收进左栏模式B" style="text;html=1;fontSize=15;align=left;verticalAlign=top;spacingTop=4" vertex="1" parent="1"><mxGeometry x="40" y="848" width="1360" height="80" as="geometry"/></mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram name="V2-3 左栏双模式与项目交互" id="v2-sidebar">
+    <mxGraphModel dx="1200" dy="800" grid="1" gridSize="10" page="1" pageWidth="1400" pageHeight="900">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+        <mxCell id="s0" value="模式A：任务列表（默认）" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=16;fontStyle=1;verticalAlign=top;spacingTop=4" vertex="1" parent="1"><mxGeometry x="40" y="40" width="400" height="780" as="geometry"/></mxCell>
+        <mxCell id="s1" value="＋ 新建任务 Ctrl+N&#10;🧩 插件市场（P2）" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=15;align=left;spacingLeft=10;verticalAlign=middle" vertex="1" parent="1"><mxGeometry x="60" y="80" width="360" height="64" as="geometry"/></mxCell>
+        <mxCell id="s2" value="任务列表　　　　　　　🔍 ⚙" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=15;align=left;spacingLeft=10" vertex="1" parent="1"><mxGeometry x="60" y="156" width="360" height="32" as="geometry"/></mxCell>
+        <mxCell id="s3" value="▾ 📁 当前项目　[⋯][☰][＋]&#10;　● 活跃任务（●=进行中）&#10;　○ 历史任务　相对时间" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#cccccc;fontSize=15;align=left;spacingLeft=10;verticalAlign=top;spacingTop=8" vertex="1" parent="1"><mxGeometry x="60" y="200" width="360" height="360" as="geometry"/></mxCell>
+        <mxCell id="s4" value="置顶区：⭐ 置顶项目/任务永远在最上" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=15;align=left;spacingLeft=10;dashed=1" vertex="1" parent="1"><mxGeometry x="60" y="572" width="360" height="36" as="geometry"/></mxCell>
+        <mxCell id="s5" value="👤 账户　[⇄设备] [⚙设置]" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#999999;fontSize=15;align=left;spacingLeft=10" vertex="1" parent="1"><mxGeometry x="60" y="740" width="360" height="44" as="geometry"/></mxCell>
+        <mxCell id="s6" value="模式B：文件目录（点「查看文件 ☰」进入）" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=16;fontStyle=1;verticalAlign=top;spacingTop=4" vertex="1" parent="1"><mxGeometry x="480" y="40" width="400" height="780" as="geometry"/></mxCell>
+        <mxCell id="s7" value="[← 返回任务]　📁 Loomery　[＋新建文件]（P2）" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=15;align=left;spacingLeft=10" vertex="1" parent="1"><mxGeometry x="500" y="80" width="360" height="36" as="geometry"/></mxCell>
+        <mxCell id="s8" value="▸ 📁 packages/&#10;　▸ 📁 domain/&#10;　　📄 constants.ts&#10;　📄 package.json&#10;　📄 pnpm-workspace.yaml&#10;（过滤 node_modules/.git）" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#cccccc;fontSize=15;align=left;spacingLeft=10;verticalAlign=top;spacingTop=8" vertex="1" parent="1"><mxGeometry x="500" y="128" width="360" height="430" as="geometry"/></mxCell>
+        <mxCell id="s9" value="点击文件 → 右列编辑器打开；该项目的会话仍可在中列继续" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=15;align=left;spacingLeft=10" vertex="1" parent="1"><mxGeometry x="500" y="570" width="360" height="56" as="geometry"/></mxCell>
+        <mxCell id="s10" value="项目行三个按钮（对应你给的截图）" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=16;fontStyle=1;align=left;spacingLeft=10;verticalAlign=top;spacingTop=4" vertex="1" parent="1"><mxGeometry x="920" y="40" width="440" height="300" as="geometry"/></mxCell>
+        <mxCell id="s11" value="⋯ 更多 → 编辑项目名 / 删除项目 / 置顶⭐&#10;　　（删除=危险操作：确认框 + 保留 checkpoint）&#10;☰ 查看文件 → 左栏切到模式B（项目文件树）&#10;＋ 新建任务 → 在该项目下创建任务并打开中列&#10;点击任务行 → 中列载入会话、当前任务高亮" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#cccccc;fontSize=15;align=left;spacingLeft=10;verticalAlign=top;spacingTop=8" vertex="1" parent="1"><mxGeometry x="940" y="84" width="400" height="240" as="geometry"/></mxCell>
+        <mxCell id="s12" value="交互规则" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=16;fontStyle=1;align=left;spacingLeft=10;verticalAlign=top;spacingTop=4" vertex="1" parent="1"><mxGeometry x="920" y="360" width="440" height="380" as="geometry"/></mxCell>
+        <mxCell id="s13" value="1. 默认模式A；记忆上次模式与展开的项目&#10;2. 模式B 顶部有 [← 返回任务]；切项目即切目录&#10;3. 任务列表支持 🔍 搜索与 ⚙ 筛选（进行中/已置顶/时间）&#10;4. 「显示更多」按需加载更早项目（分页）&#10;5. 左栏宽度、模式、置顶全部持久化&#10;6. 数据映射：项目=工作区，任务=Thread（Session 归组）&#10;7. 新增 RPC：项目编辑/删除/置顶、任务归组查询" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#cccccc;fontSize=15;align=left;spacingLeft=10;verticalAlign=top;spacingTop=8" vertex="1" parent="1"><mxGeometry x="940" y="404" width="400" height="320" as="geometry"/></mxCell>
+        <mxCell id="s14" value="图例：绿=固定操作区  白=列表/树主体  黄=交互说明  灰=账户区" style="text;html=1;fontSize=14;align=left;" vertex="1" parent="1"><mxGeometry x="40" y="836" width="700" height="30" as="geometry"/></mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

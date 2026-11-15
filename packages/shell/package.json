@@ -1,0 +1,32 @@
+{
+  "name": "@loomery/shell",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "dist/main.js",
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "build": "node build.mjs",
+    "start": "pnpm run build && electron .",
+    "start:log": "pnpm run build && electron . --enable-logging"
+  },
+  "dependencies": {
+    "@loomery/adapter-ai-sdk": "workspace:*",
+    "@loomery/adapter-editor-gateway": "workspace:*",
+    "@loomery/adapter-fs-tools": "workspace:*",
+    "@loomery/adapter-process": "workspace:*",
+    "@loomery/adapter-terminal": "workspace:*",
+    "node-pty": "^1.1.0",
+    "@loomery/adapter-ipc-bridge": "workspace:*",
+    "@loomery/adapter-memory-store": "workspace:*",
+    "@loomery/agent-core": "workspace:*",
+    "@loomery/domain": "workspace:*",
+    "@loomery/ports": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.0",
+    "electron": "^38.0.0",
+    "esbuild": "^0.24.0",
+    "typescript": "^5.6.0"
+  }
+}

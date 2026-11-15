@@ -1,0 +1,28 @@
+# Loomery 打包配置（electron-builder）：应用目录 = release/stage（scripts/package-stage.cjs 组装）
+appId: com.loomery.shell
+electronVersion: 38.8.6  # 与 packages/shell devDeps electron 版本一致（monorepo 下 electron-builder 探测不到）
+productName: Loomery
+directories:
+  app: release/stage          # 打包这个目录（staging，scripts/package-stage.cjs 组装）——不是仓库根
+  output: release/dist
+  buildResources: release/stage/shell/resources
+files:
+  - package.json
+  - shell/dist/main.js
+  - shell/dist/preload.cjs
+  - shell/dist/node_modules/**  # node-pty native（asarUnpack，ABR-0024）
+  - shell/resources/**
+  - ui/dist/**
+asar: true
+asarUnpack:
+  - shell/dist/node_modules/node-pty/**
+win:
+  icon: release/stage/shell/resources/icon.ico
+  target:
+    - target: dir   # 先产便携目录（--dir 等价）；nsis 安装器待签名证书接入后启用
+    - target: nsis
+nsis:
+  oneClick: false
+  allowToChangeInstallationDirectory: true
+  artifactName: Loomery-Setup-${version}.exe
+npmRebuild: false   # native 模块已预构建拷贝，不在打包机重编译

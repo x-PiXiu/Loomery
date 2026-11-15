@@ -1,0 +1,24 @@
+{
+  "name": "@loomery/adapter-ipc-bridge",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./envelope": "./src/envelope.ts",
+    "./renderer": "./src/renderer/index.ts",
+    "./preload": "./src/preload.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@loomery/domain": "workspace:*",
+    "@loomery/ports": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.0",
+    "electron": "^38.0.0",
+    "typescript": "^5.6.0"
+  }
+}

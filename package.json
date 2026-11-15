@@ -1,0 +1,38 @@
+{
+  "name": "loomery",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Loomery - Agent-native desktop code editor",
+  "type": "module",
+  "packageManager": "pnpm@10.33.2",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "typecheck": "turbo run typecheck",
+    "test": "turbo run test",
+    "check:imports": "node scripts/check-imports.mjs",
+    "check:deps": "dependency-cruise packages --config .dependency-cruiser.cjs",
+    "lint": "turbo run typecheck && eslint . && node scripts/check-imports.mjs && dependency-cruise packages --config .dependency-cruiser.cjs",
+    "stage": "node scripts/package-stage.cjs",
+    "dist:dir": "pnpm run stage && electron-builder --dir",
+    "dist:win": "pnpm run stage && electron-builder --win",
+    "icon": "node scripts/make-icon.cjs && node scripts/make-ico.cjs"
+  },
+  "devDependencies": {
+    "@electron/rebuild": "^3.7.0",
+    "dependency-cruiser": "^16.8.0",
+    "electron-builder": "^26.18.0",
+    "eslint": "^9.20.0",
+    "turbo": "^2.4.0",
+    "typescript-eslint": "^8.24.0"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "electron",
+      "esbuild",
+      "turbo",
+      "node-pty"
+    ]
+  }
+}
