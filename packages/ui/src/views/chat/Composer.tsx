@@ -1,6 +1,6 @@
 // Composer（单卡片）：autosize 输入 + 预设菜单（四合一）+ 容量圈 + 模型菜单 + 发送
 import { Children, useEffect, useMemo, useRef, useState, type ReactElement } from 'react';
-import { ArrowUp, ChevronDown, Check, Plus, CircleHelp, Copy, CopyPlus, Eraser, File as FileIcon, FileCode2, FileText, FolderClosed, FolderOpen, Image as ImageIcon, MoreHorizontal, PanelRight, Pencil, Pin, ThumbsDown, ThumbsUp, Trash2, Undo2, Upload, X, AppWindow, Settings2, SquareTerminal } from 'lucide-react';
+import { ArrowUp, ChevronDown, Check, Plus, CircleHelp, Copy, CopyPlus, Eraser, File as FileIcon, FileCode2, FileText, FolderClosed, FolderOpen, History, Image as ImageIcon, MoreHorizontal, PanelRight, Pencil, Pin, ThumbsDown, ThumbsUp, Trash2, Undo2, Upload, X, AppWindow, Settings2, SquareTerminal } from 'lucide-react';
 import Markdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { RPC } from '@loomery/adapter-ipc-bridge/envelope';
@@ -1117,6 +1117,7 @@ export function ChatPanel({ sidebarCollapsed, onToggleSidebar }: { sidebarCollap
             <PanelRight size={19} className="tool-icon" />
           </span>
           <span className="tool-wrap" title="导出会话（JSONL）"><Upload size={19} className="tool-icon" onClick={() => void exportThread()} /></span>
+          <span className="tool-wrap" title="事件时间线" onClick={() => window.dispatchEvent(new CustomEvent('loomery:open-timeline'))}><History size={19} className="tool-icon" /></span>
           <span className="tool-wrap" title="帮助"><CircleHelp size={19} className="tool-icon" onClick={() => window.dispatchEvent(new CustomEvent('loomery:open-help'))} /></span>
           <span className="tool-wrap dim2" title="在独立窗口打开任务（P2）"><AppWindow size={19} className="tool-icon dim2" /></span>
           <WinControls />

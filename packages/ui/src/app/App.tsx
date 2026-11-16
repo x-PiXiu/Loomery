@@ -98,6 +98,7 @@ export function App(): ReactElement {
       .catch(() => undefined);
     const onOpenSettings = (ev?: Event): void => { settingsSectionRef.current = (ev as CustomEvent | undefined)?.detail ?? 'models'; setSettingsOpen(true); };
     const onOpenHelp = (): void => setHelpOpen(true);
+    const onOpenTimeline = (): void => setTimelineOpen(true);
     // focusRight（编辑器占满）：编辑器列旧按钮翻转；重启自动复位（上方 state）
     const onFocusRight = (): void => setFocusRight((v) => !v);
     // 编辑区显隐（聊天头部开关）：detail.visible 指定目标值（函数式 set 避免 effect 闭包 stale）
@@ -111,6 +112,7 @@ export function App(): ReactElement {
     };
     window.addEventListener('loomery:open-settings', onOpenSettings);
     window.addEventListener('loomery:open-help', onOpenHelp);
+    window.addEventListener('loomery:open-timeline', onOpenTimeline);
     window.addEventListener('loomery:focus-right', onFocusRight);
     window.addEventListener('loomery:toggle-editor', onToggleEditor);
     // 编辑区隐藏时点文件：editorBus 挂 pending + 发 show-editor → 自动显示编辑区（挂载后 takePendingOpen 打开该文件）
@@ -122,6 +124,7 @@ export function App(): ReactElement {
       offCfg();
       window.removeEventListener('loomery:open-settings', onOpenSettings);
       window.removeEventListener('loomery:open-help', onOpenHelp);
+      window.removeEventListener('loomery:open-timeline', onOpenTimeline);
       window.removeEventListener('loomery:focus-right', onFocusRight);
       window.removeEventListener('loomery:toggle-editor', onToggleEditor);
       window.removeEventListener('loomery:show-editor', onShowEditor);
