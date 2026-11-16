@@ -7,3 +7,4 @@ coverage/
 .turbo/
 .loomery-data/
 release/
+e2e-ws/
