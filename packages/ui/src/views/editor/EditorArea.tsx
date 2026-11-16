@@ -2,7 +2,7 @@
 import { useEffect, useRef, useState, type ReactElement } from 'react';
 import Markdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
-import { Check, Columns2, Copy, GitCompare, ExternalLink, Eye, MoreHorizontal, X, ChevronsDown, File as FileIcon, FileCode2, FileText, FolderClosed, Globe, Image as ImageIcon, Maximize2, PictureInPicture2, Plus, Search, GitPullRequest, Terminal } from 'lucide-react';
+import { Check, Columns2, Copy, GitCompare, ExternalLink, Eye, MoreHorizontal, X, ChevronsDown, FileCode2, FileText, FolderClosed, Globe, Maximize2, PictureInPicture2, Plus, Search, GitPullRequest, Terminal } from 'lucide-react';
 import { RPC } from '@loomery/adapter-ipc-bridge/envelope';
 import { bridge, rpc } from '@loomery/adapter-ipc-bridge/renderer';
 import { emitEnvEvent } from '@loomery/adapter-editor-gateway/renderer';
@@ -10,6 +10,7 @@ import type { Diagnostic } from '@loomery/domain';
 import { monaco } from '../../monaco-setup';
 import { insertToComposer, registerBrowserOpener, registerDiffOpener, registerEditorOpener, takePendingOpen, unregisterBrowserOpener, unregisterDiffOpener, unregisterEditorOpener, requestTerminalShow } from '../../gateway/editorBus';
 import { viewerFor } from './viewers';
+import { FileTypeIcon } from '../sidebar/FileTypeIcon';
 import { notifyTabsCount } from '../../gateway/editorBus';
 import { emitEnvironment, setEditorHooksProvider, setFileReloadHandler } from '../../gateway/mount';
 import { balanceFences } from '../../utils/markdown';
@@ -680,11 +681,8 @@ ${sel}`);
     }
   };
   const tabIcon = (path: string): ReactElement => {
-    const ext = path.split('.').pop()?.toLowerCase() ?? '';
-    if (['png', 'jpg', 'jpeg', 'gif', 'webp', 'svg', 'ico', 'bmp'].includes(ext)) return <ImageIcon size={12} />;
-    if (['md', 'txt'].includes(ext)) return <FileText size={12} />;
-    if (['ts', 'tsx', 'js', 'jsx', 'json', 'py', 'go', 'rs', 'css', 'html', 'yml', 'yaml', 'mjs', 'cjs'].includes(ext)) return <FileCode2 size={12} />;
-    return <FileIcon size={12} />;
+    // 文件类型图标：与侧栏文件树同一套映射（Simple Icons 语言标 + 语义回退）
+    return <FileTypeIcon name={path.split(/[\\/]/).pop() ?? path} size={12} />;
   };
 
   return (

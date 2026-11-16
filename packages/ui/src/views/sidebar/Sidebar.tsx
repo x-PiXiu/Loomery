@@ -1,11 +1,12 @@
 // V2 左栏：双模式侧栏——模式A 任务列表（默认）/ 模式B 项目文件树
 import { useEffect, useMemo, useState, useSyncExternalStore, type CSSProperties, type ReactElement } from 'react';
 import { ArrowLeft, ArrowRight, Blocks, ChevronRight, File as FileIcon, FolderClosed, FolderInput, FolderOpen, ListFilter,
-  FolderPlus, MoreHorizontal, Pin, Plus, Search, Settings, Trash2, UserRound, Image as ImageIcon } from 'lucide-react';
+  FolderPlus, MoreHorizontal, Pin, Plus, Search, Settings, Trash2, UserRound } from 'lucide-react';
 import { RPC } from '@loomery/adapter-ipc-bridge/envelope';
 import { rpc } from '@loomery/adapter-ipc-bridge/renderer';
 import type { LoopEvent } from '@loomery/domain';
 import { runtime, useRuntime } from '../../stores/runtime';
+import { FileTypeIcon } from './FileTypeIcon';
 import { insertToComposer, openInEditor } from '../../gateway/editorBus';
 import appIcon from '../../assets/app-icon-64.png';
 import type { ThreadRow } from '../../stores/runtime';
@@ -430,7 +431,7 @@ export function Sidebar({ onToggleSidebar }: { onToggleSidebar?: () => void }): 
               <span className={`tree-chevron${n.isDir && !collapsedDirs.has(n.path) ? ' open' : ''}`}>
                 {n.isDir ? <ChevronRight size={12} /> : null}
               </span>
-              {n.isDir ? <FolderClosed size={14} /> : ['png', 'jpg', 'jpeg', 'gif', 'webp', 'svg', 'ico', 'bmp'].includes(n.name.split('.').pop()?.toLowerCase() ?? '') ? <ImageIcon size={14} /> : <FileIcon size={14} />}
+              {n.isDir ? <FolderClosed size={14} /> : <FileTypeIcon name={n.name} />}
               <span className="tree-name">{n.name}</span>
             </div>
           ))}
