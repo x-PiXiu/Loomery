@@ -15,9 +15,10 @@ export function createPreviewTool(deps: PreviewToolDeps): RegisteredTool {
   return {
     name: 'preview_control',
     description:
-      '控制工作区 HTML 的内嵌预览与内置浏览器：action="console" 读取预览页 console 输出与报错（写完网页后先 reload 再读 console 验证）；' +
-      'action="reload" 刷新预览；action="navigate" 预览跳转同项目另一页面；action="content" 提取页面渲染后的可见文本（验证接口数据/内容是否真的显示出来）；' +
-      'action="browser" 在编辑区内置浏览器标签打开 url——展示网页一律用它，绝不 start <url> 唤起系统浏览器。',
+      // 11-17 上下文瘦身：reload→console 验证流与"勿唤起系统浏览器"与 SYSTEM_BASE「验证闭环」去重
+      '控制工作区 HTML 的内嵌预览与内置浏览器：console 读取预览页输出与报错、reload 刷新预览、' +
+      'navigate 预览跳转同项目另一页面、content 提取页面渲染后的可见文本、' +
+      'browser 在编辑区内置浏览器标签打开 url——展示网页一律用它，勿唤起系统浏览器；验证工作流见系统提示「验证闭环」。',
     inputSchema: {
       type: 'object',
       required: ['action'],
@@ -26,8 +27,8 @@ export function createPreviewTool(deps: PreviewToolDeps): RegisteredTool {
         action: {
           type: 'string',
           enum: ['console', 'reload', 'navigate', 'browser', 'content'],
-          description:
-            'console=读页面 console/报错（需 path）；reload=刷新预览（需 path）；navigate=预览跳转（需 path+target）；browser=内置浏览器标签打开 url（需 url）；content=提取渲染后文本（url 或 path 二选一）',
+          // 11-17 去重：动作语义已在工具说明列出；此处只留独有信息——各动作的必填参数映射
+          description: '必填参数：console/reload/navigate/content 需 path（navigate 另需 target）；browser 需 url；content 也可用 url',
         },
         url: { type: 'string', description: 'action=browser/content 时：完整 URL（如 http://localhost:5173）' },
         tab: { type: 'string', enum: ['new', 'active'], description: 'action=browser 的标签语义：active=已有浏览器标签则原地换 URL（默认）；new=强制新标签' },

@@ -12,9 +12,9 @@ export function createProcessListTool(deps: ProcessListDeps): RegisteredTool {
   return {
     name: 'process_list',
     description:
+      // 11-17 上下文瘦身：群杀禁令的"原因长文"与 SYSTEM_BASE 去重，保留点位可执行的停止姿势
       '列出本会话中 agent 通过 run_command 启动过的后台/长驻进程（含 pid、命令、工作目录、状态）。' +
-      '停掉某个后台进程的正确姿势：先 process_list 拿到 pid，再 taskkill /PID <pid> /F 精确击杀。' +
-      '严禁 taskkill /F /IM node.exe 这类按映像名群杀——宿主应用/开发工具链共享同名映像，会连带杀死自己。',
+      '停止姿势：先拿 pid 再 taskkill /PID <pid> /F 精确杀——禁令与原因见系统提示（勿按映像名群杀）。',
     inputSchema: { type: 'object', required: [], additionalProperties: false, properties: {} },
     sideEffect: 'read',
     source: 'builtin',

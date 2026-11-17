@@ -49,10 +49,11 @@ export function createBrowserControlTool(deps: BrowserControlDeps = {}): Registe
   return {
     name: 'browser_control',
     description:
-      '控制编辑区内置浏览器标签（dev 页面调试的眼睛和手）：action="screenshot" 截图给模型看布局（selector=元素级局部；默认落编辑区图片标签，可存工作区文件）；' +
-      'action="wait" 等待元素出现/延时（异步渲染的页面截图前必用）；action="click"/"fill"/"press"/"hover"/"scroll" 操作页面；' +
-      'action="read" 提取可见文本；action="dom" 返回简化 DOM 大纲（帮 agent 挑选有效选择器）；action="close" 关闭标签。' +
-      '截图每轮最多 2 张。目标页未打开时先 preview_control(action="browser", url=…)。',
+      // 11-17 上下文瘦身：截图配额/时序/预览前置与 SYSTEM_BASE「验证闭环」去重，括号参数细节交 schema
+      '控制编辑区内置浏览器标签（dev 页面调试的眼睛和手）：screenshot 截图看布局（selector=元素级局部）、' +
+      'wait 等元素出现/延时、click/fill/press/hover/scroll 操作页面、read 提取可见文本、' +
+      'dom 返回简化 DOM 大纲、close 关闭标签——参数语义见 schema，截图配额与时序纪律见系统提示。' +
+      '目标页未打开时先 preview_control(action="browser", url=…)。',
     inputSchema: {
       type: 'object',
       required: ['action', 'url'],
@@ -61,7 +62,8 @@ export function createBrowserControlTool(deps: BrowserControlDeps = {}): Registe
         action: {
           type: 'string',
           enum: ['screenshot', 'wait', 'click', 'fill', 'press', 'hover', 'scroll', 'read', 'dom', 'close'],
-          description: 'screenshot=截图；wait=等元素出现/延时；click=点击；fill=填值；press=按键（Enter/Escape…）；hover=悬停（触发 CSS :hover 菜单）；scroll=滚动；read=提取可见文本；dom=DOM 大纲；close=关闭该标签',
+          // 11-17 去重：动作语义已在工具说明逐项列出（enum 给名字），此处不再复述
+          description: '动作语义见工具说明',
         },
         url: { type: 'string', description: '目标页完整 URL（定位对应浏览器标签）' },
         selector: { type: 'string', description: 'CSS 选择器：screenshot=元素级局部；click/fill/hover/scroll(wait)=目标元素' },

@@ -8,10 +8,9 @@ export function createTaskCompleteTool(): RegisteredTool {
   return {
     name: 'task_complete',
     description:
-      '声明本轮任务收尾（调用后本轮即结束）。必须先对照计划自查：outcome=complete（任务完成，默认）或 blocked（无法继续——' +
-      '缺权限/需求矛盾/反复失败，此时 outstanding 必须写明阻塞原因，不要硬磨）；summary=做了什么（1-3 句）；' +
-      'outstanding=遗留项/未完成项（无则空数组）；verification=做过的验证（编译/测试/preview console 检查——' +
-      '做过写操作但没验证过时，先去验证再声明；blocked 时可写尝试过程与失败原因）；confidence=完成把握。' +
+      // 11-17 上下文瘦身：字段语义/验证要求与 SYSTEM_BASE「收尾协议」去重（schema 逐字段说明仍在）；
+      // 只保留点位最关键的后果提醒（交叉核对），其余交系统提示
+      '声明本轮任务收尾（调用后本轮即结束）。五字段语义与验证真实性要求见系统提示「收尾协议」节（schema 内有逐字段说明）。' +
       '注意：outcome=complete 时内核会把 verification 与真实命令执行记录交叉核对，虚报会被拦下要求补验证。',
     inputSchema: {
       type: 'object',

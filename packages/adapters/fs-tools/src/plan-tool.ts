@@ -7,9 +7,9 @@ export function createPlanTool(): RegisteredTool {
   return {
     name: 'plan_write',
     description:
-      '维护当前任务的子步骤计划清单（2~12 步，每步一句话）。多步任务（≥3 步）开工前先提交完整清单；' +
-      '每步开工置 in_progress、完成立即置 completed、失败置 failed——用户在界面实时看到进度。' +
-      '每次调用提交全量清单（覆盖式更新）。简单问答/单步任务不要使用。',
+      // 11-17 上下文瘦身：适用时机/状态流转与 SYSTEM_BASE「计划分解」去重，保留全量覆盖契约
+      '维护当前任务的子步骤计划清单（2~12 步，每步一句话）。每次调用提交全量清单（覆盖式更新）。' +
+      '多步任务开工前置清单、状态流转（in_progress/completed/failed）与适用边界见系统提示「计划分解」节。',
     inputSchema: {
       type: 'object',
       required: ['steps'],

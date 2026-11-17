@@ -12,10 +12,11 @@ export function createReadFile(): RegisteredTool {
   return {
     name: 'read_file',
     description:
+      // 11-17 上下文瘦身：通读纪律与 SYSTEM_BASE「文件操作」去重，保留行号/锚点/编码等本工具独有契约
       '读取工作区内文本文件内容，输出带行号（格式 "   N| line"）。' +
       'path 必须为工作区内绝对路径；行号仅用于定位，apply_diff 的 oldLines 必须是不含行号前缀的原始行。' +
-      '自动探测编码（UTF-8/GBK/Big5/UTF-16），非 UTF-8 文件也能正确读取。' +
-      '大文件默认只读前 400 行并用提示标注剩余行数——先读开头判断相关性，用 offset/limit 精读所需段落，避免通读长文档。',
+      '自动探测编码（UTF-8/GBK/Big5/UTF-16）。' +
+      '大文件默认只读前 400 行并用提示标注剩余行数——先读开头判断相关性，用 offset/limit 精读所需段落。',
     inputSchema: {
       type: 'object',
       required: ['path'],

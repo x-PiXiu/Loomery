@@ -11,9 +11,11 @@ export function createRunCommand(processPort: ProcessPort, opts: RunCommandOptio
   return {
     name: 'run_command',
     description:
+      // 11-17 上下文瘦身 + 修过时矛盾：原"长驻服务请提示用户在终端面板运行"与 SYSTEM_BASE 的
+      // background=true 纪律冲突（background 实装于 11-13，描述未跟上）——对齐系统提示
       '在工作区执行 shell 命令（如构建、测试、语法检查、git 操作），返回 stdout/stderr 合并输出与退出码。' +
-      '命令未在超时内结束会被强制终止。适合一次性命令；长驻服务（dev server）请提示用户在终端面板运行。' +
-      'cwd 必须位于工作区内。',
+      '命令未在超时内结束会被强制终止。适合一次性命令；长驻服务（dev server）用 background=true 后台启动' +
+      '（立即返回 pid，停止姿势与群杀禁令见系统提示）。cwd 必须位于工作区内。',
     inputSchema: {
       type: 'object',
       required: ['command'],
@@ -23,7 +25,7 @@ export function createRunCommand(processPort: ProcessPort, opts: RunCommandOptio
         // x-path 元数据：cwd 进入与 path 字段同等的归一化 + 越界护栏 + scratch 判定（F1.2）
         cwd: { type: 'string', description: '工作目录（缺省为工作区第一个根），必须位于工作区内', 'x-path': true },
         timeoutMs: { type: 'number', description: '超时毫秒数，默认 60000，上限 300000（background=true 时忽略）' },
-        background: { type: 'boolean', description: '后台启动（dev server/长驻服务专用）：立即返回 pid，不等待退出。停它：先 process_list 查 pid，再 taskkill /PID <pid> /F。严禁 start /B 玩命玩法' },
+        background: { type: 'boolean', description: '后台启动（dev server/长驻服务专用）：立即返回 pid，不等待退出；勿用 start /B 替代，停止纪律见系统提示' },
       },
     },
     sideEffect: 'execute',
