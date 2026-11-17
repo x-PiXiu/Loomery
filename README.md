@@ -63,7 +63,7 @@ pnpm --filter @loomery/shell start   # 启动桌面应用
 质量门禁与打包：
 
 ```bash
-pnpm test        # vitest 全量单测（302 个用例）
+pnpm test        # vitest 全量单测（308 个用例）
 pnpm lint        # typecheck + eslint + import 边界自检 + 依赖方向检查
 pnpm dist:win    # 打包 Windows 安装包（electron-builder）
 ```
@@ -72,7 +72,7 @@ pnpm dist:win    # 打包 Windows 安装包（electron-builder）
 
 ## 质量与工程化
 
-- vitest 单测 302 个用例（45 个测试文件）；
+- vitest 单测 308 个用例（46 个测试文件）；
 - dependency-cruiser 依赖方向规则 + import 边界自检，进 CI 强制；
 - 模型接入经 Vercel AI SDK（Anthropic / OpenAI 兼容协议），多模型源扇入失败隔离。
 
