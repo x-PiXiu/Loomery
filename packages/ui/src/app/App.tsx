@@ -4,7 +4,7 @@ import { ArrowLeftRight, X } from "lucide-react";
 import { bridge, rpc } from '@loomery/adapter-ipc-bridge/renderer';
 import { RPC } from '@loomery/adapter-ipc-bridge/envelope';
 import type { AppConfig } from '@loomery/domain';
-import { runtime } from '../stores/runtime';
+import { runtime, useRuntime } from '../stores/runtime';
 import { mountEditorBridge, notifyFileChanges } from '../gateway/mount';
 import { Sidebar } from '../views/sidebar/Sidebar';
 import { ChatPanel } from '../views/chat/Composer';
@@ -61,6 +61,10 @@ export function App(): ReactElement {
     return !v;
   });
   const [settingsOpen, setSettingsOpen] = useState(false);
+  // 订阅 config（useSyncExternalStore）：onboarding 条件必须随 runtime.set 即时重渲染——
+  // 此前条件在 App 层用 getState() 静态求值，finishOnboarding 的 set 不触发本组件重渲染：
+  // "开始使用/X"视觉无响应，弹窗要等第一个无关 App state 变化（拖分隔条）才显形（11-17 实证）
+  const liveConfig = useRuntime((s) => s.config);
   // onboarding 完成写回：configSave patch + 本窗口 runtime 即时同步（双窗口广播会兜底另一窗）
   const finishOnboarding = (openSettings: boolean): void => {
     const cfg = runtime.getState().config;
@@ -242,7 +246,7 @@ export function App(): ReactElement {
           </div>
         </Overlay>
       ) : null}
-      {runtime.getState().config && runtime.getState().config!.onboardingDone !== true ? (
+      {liveConfig && liveConfig.onboardingDone !== true ? (
         <Overlay title="欢迎使用 Loomery" onClose={() => finishOnboarding(false)}>
           <div>
             <div className="help-list">

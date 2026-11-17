@@ -67,6 +67,10 @@ export class JsonConfigStore implements ConfigStore {
       stored = salvageConfig(raw) ?? {};
     }
     return {
+      // 保留 AppConfig 可选顶层字段（onboardingDone/agentPersona/skills/projectNames…）与未知顶层键（前向兼容）。
+      // 此前这里是白名单重建——磁盘存了 onboardingDone:true 但每次启动读回即丢（11-17 实证：欢迎浮层"拖分隔条才弹出/重启必现"根因），
+      // persona/技能开关/项目改名同样重启即失效。显式段落在后：models/approval 等仍走合并语义，spread 不覆盖它们。
+      ...stored,
       models: mergeSection(base.models, stored.models),
       approval: mergeSection(base.approval, stored.approval),
       restorePolicy: stored.restorePolicy ?? base.restorePolicy,

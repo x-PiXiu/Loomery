@@ -60,6 +60,32 @@ describe('JsonConfigStore 损坏容错', () => {
     expect((await store.load()).workspaceRoots).toEqual(['E:/x']);
   });
 
+  it('load 保留 AppConfig 可选顶层字段与未知键（11-17 欢迎浮层重启必现的根因：白名单重建丢字段）', async () => {
+    const dir = await mk();
+    const p = join(dir, 'config.json');
+    await writeFile(
+      p,
+      JSON.stringify({
+        ...JSON.parse(VALID),
+        onboardingDone: true,
+        agentPersona: '说话简短',
+        skills: { disabled: ['skill-creator'] },
+        projectNames: { 'E:/a': '我的项目' },
+        futureField: { kept: true }, // 前向兼容：未知顶层键也必须活过 load
+      }),
+      'utf8',
+    );
+    const cfg = await new JsonConfigStore(p).load();
+    expect(cfg.onboardingDone).toBe(true);
+    expect(cfg.agentPersona).toBe('说话简短');
+    expect(cfg.skills?.disabled).toEqual(['skill-creator']);
+    expect(cfg.projectNames).toEqual({ 'E:/a': '我的项目' });
+    expect((cfg as unknown as Record<string, unknown>).futureField).toEqual({ kept: true });
+    // 既有段合并语义不回归
+    expect(cfg.workspaceRoots).toEqual(['E:/a', 'E:/b']);
+    expect(cfg.models.main.modelId).toBe('m1');
+  });
+
   it('损坏文件上保存自愈：按抢救前段合并，新增模型不丢（实证回归）', async () => {
     const dir = await mk();
     const p = join(dir, 'config.json');
