@@ -1,6 +1,7 @@
 // 07 §5 Checkpoint：Turn 内某路径首次被写前懒快照；回滚 = 还原本 Turn 全部快照；
-// 滚动保留最近 N 个 Turn（CHECKPOINT_KEEP_TURNS）
+// 滚动保留最近 N 个 Turn（CHECKPOINT_KEEP_TURNS）——快照落地后自调 prune（滚动策略是实现细节不进端口契约）
 import { copyFile, mkdir, readFile, readdir, rm, stat, writeFile } from 'node:fs/promises';
+import { CHECKPOINT_KEEP_TURNS } from '@loomery/domain';
 import type { CheckpointPort } from '@loomery/ports';
 import { existsSync } from 'node:fs';
 import { join } from 'node:path';
@@ -32,11 +33,14 @@ export class CheckpointService implements CheckpointPort {
     await mkdir(dirnameSafe(dest), { recursive: true });
     if (existsSync(file)) {
       await copyFile(file, dest);
-      return true;
+    } else {
+      // 新建文件：空快照 + .created 标记，回滚时删除目标
+      await writeFile(dest, '');
+      await writeFile(`${dest}.created`, '');
     }
-    // 新建文件：空快照 + .created 标记，回滚时删除目标
-    await writeFile(dest, '');
-    await writeFile(`${dest}.created`, '');
+    // 滚动清理接线（11-17）：新 Turn 快照落地后按目录 mtime 保留最近 CHECKPOINT_KEEP_TURNS 个。
+    // 当前 Turn 目录刚写入 mtime 最新必被保留；清理失败不拖垮快照（prune 内部已逐目录容错）
+    await this.prune(CHECKPOINT_KEEP_TURNS).catch(() => []);
     return true;
   }
 

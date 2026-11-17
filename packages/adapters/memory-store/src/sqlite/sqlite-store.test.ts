@@ -98,13 +98,23 @@ describe('SqliteMemoryStore（ADR-0023）', () => {
     expect((await store.listThreads())[0]?.usageTokens).toBe(15); // 只算一次
   });
 
-  it('deleteThread 清事件与元数据', async () => {
+  it('deleteThread 清事件与元数据，并回收任务级事实行与记忆读模型缓存（11-17 三留缺口补全）', async () => {
     const root = await mkRoot();
     const store = new SqliteMemoryStore(root);
     for (const e of buildStream('t1')) await store.appendEvent('t1', e);
+    // 物化任务记忆读模型缓存（memory/tasks/t1.json）
+    await store.queryTaskFacts('t1', '', 10);
+    expect(existsSync(join(root, 'memory', 'tasks', 't1.json'))).toBe(true);
+    // 任务级事实行（threadId=t1）与全局事实行（threadId=NULL）并存
+    await store.saveFact({ ...fact('f-task', '任务级事实', 100), scope: 'task', threadId: 't1' });
+    await store.saveFact(fact('f-global', '全局事实', 101));
     await store.deleteThread('t1');
     expect(await store.loadEvents('t1')).toEqual([]);
     expect(await store.listThreads()).toEqual([]);
+    // 任务级事实行随删，全局事实行不受 WHERE threadId 影响
+    expect((await store.queryFacts('', 10)).map((f) => f.id)).toEqual(['f-global']);
+    // 任务记忆读模型缓存文件回收（与 JSON 引擎 deleteThread 同语义）
+    expect(existsSync(join(root, 'memory', 'tasks', 't1.json'))).toBe(false);
   });
 
   it('saveFact：id upsert + 同内容去重；queryFacts 相关性排序与 JsonFacts 同语义', async () => {

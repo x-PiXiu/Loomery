@@ -253,7 +253,11 @@ export class SqliteMemoryStore implements MemoryStore {
     this.tx(() => {
       this.db.prepare('DELETE FROM events WHERE threadId = ?').run(threadId);
       this.db.prepare('DELETE FROM thread_meta WHERE threadId = ?').run(threadId);
+      // 任务级事实行（全局事实 threadId 为 NULL 不受影响）；JSON 引擎经 saveFact no-op 天然无此数据
+      this.db.prepare('DELETE FROM facts WHERE threadId = ?').run(threadId);
     });
+    // 任务记忆读模型缓存（memory/tasks/<id>.json，可重建但随删回收——与 JSON 引擎 deleteThread 同语义）
+    await this.taskFacts.deleteThread(threadId);
   }
 
   /** 存储 GC（内核算好等价流）：事务内整表替换该任务事件 + 元数据从保留集重算（与 JSON 重放折叠等价） */

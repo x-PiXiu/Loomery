@@ -116,6 +116,21 @@ export class JsonConfigStore implements ConfigStore {
     const tmp = this.filePath + '.tmp';
     await writeFile(tmp, JSON.stringify(merged, null, 2), 'utf8');
     const { renameSync } = await import('node:fs');
-    renameSync(tmp, this.filePath);
+    // Windows 实证（11-17 双窗口测试揪出）：目标文件被并发 load() 读句柄占住时 rename 抛 EPERM——
+    // 重试等读句柄释放；rename 成功前绝不产生半写态（原子性不因重试受损），持续占用才抛
+    let lastErr: unknown;
+    for (let attempt = 0; attempt < 10; attempt++) {
+      try {
+        renameSync(tmp, this.filePath);
+        lastErr = undefined;
+        break;
+      } catch (err) {
+        const code = (err as NodeJS.ErrnoException).code;
+        if (code !== 'EPERM' && code !== 'EBUSY') throw err;
+        lastErr = err;
+        await new Promise((r) => setTimeout(r, 10 + attempt * 5));
+      }
+    }
+    if (lastErr) throw lastErr;
   }
 }

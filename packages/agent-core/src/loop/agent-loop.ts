@@ -107,7 +107,6 @@ export async function runTurn(input: TurnInput, deps: AgentLoopDeps): Promise<Tu
     stepCount: 0,
     seenToolCalls: new Set<string>(),
     contextHashStreak: 0,
-    toolsDisabled: false,
     budget: deps.budget,
     spent: { steps: 0, tokens: 0, wallMs: 0 },
     abort: input.abortController.signal,
@@ -178,7 +177,8 @@ export async function runTurn(input: TurnInput, deps: AgentLoopDeps): Promise<Tu
       }
 
       // ---- 装配（含长期记忆 provider，ADR-0012）----
-      const toolSpecs = state.toolsDisabled ? [] : deps.registry.listSpecs(input.mode);
+      // 降档禁工具不走状态位：degrade() 整段绕开主循环（toolsDisabled 死位 11-17 已删）
+      const toolSpecs = deps.registry.listSpecs(input.mode);
       // 预算余量提示（Fix D）：剩余步数少时提醒模型收尾——已实证"读到熔断"的浪费模式
       const remaining = deps.budget.maxSteps - state.spent.steps;
       const budgetHint = remaining <= 6

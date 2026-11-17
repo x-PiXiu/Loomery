@@ -567,6 +567,10 @@ export async function createRuntime(
     const { threadId } = p as { threadId: string };
     threads.forget(String(threadId));
     await store.deleteThread(String(threadId));
+    // ADR-0021 任务删除 GC——三留资产回收（简报 .md+归档 / 产物索引行+blob 引用计数删除）。
+    // 幂等：JSON 引擎的 store.deleteThread 已内部清理同样资产（二次调用 no-op）；SQLite 引擎靠这两行补全缺口
+    await briefs.deleteThread(String(threadId));
+    await artifacts.deleteThread(String(threadId));
     pipeline.clearGrants(String(threadId)); // 12 §F1.5：会话级授权随线程删除失效
     try { rmSync(join(userData, 'scratch', String(threadId)), { recursive: true, force: true }); } catch { /* 无目录则跳过 */ }
     return true;
@@ -635,20 +639,7 @@ export async function createRuntime(
     if (!existsSync(join(dir, '.git'))) return { repo: false, branch: '', changed: [], totalAdded: 0, totalRemoved: 0 };
     return gitAdapter.overview(dir);
   });
-  // 胶囊用户提交：用户是审批者（领土行为），直接走 GitAdapter（数组参数防注入）
-  rpc.handle(RPC.gitCommitDirect, async (p) => {
-    const { root, message } = (p ?? {}) as { root?: string; message?: string };
-    const msg = typeof message === 'string' ? message.trim() : '';
-    if (msg.length === 0) return { ok: false, error: '提交信息为空' };
-    const dir = typeof root === 'string' && root.length > 0 && isPathInsideWorkspace(root, config.workspaceRoots) ? root : config.workspaceRoots[0];
-    if (!dir || !existsSync(join(dir, '.git'))) return { ok: false, error: '当前工作区不是 git 仓库' };
-    try {
-      const summary = await gitAdapter.commit(dir, msg);
-      return { ok: true, summary };
-    } catch (err) {
-      return { ok: false, error: String(err instanceof Error ? err.message : err).slice(0, 200) };
-    }
-  });
+  // git.commitDirect 已并入 git.addCommit（includeUnstaged=false ≡ 只提交已暂存，且多友好错误）——11-17 死码清理
 
   // ---- 13 git 工具套件（ADR-0027）：读免审；写=用户主动点击即授权 ----
   let lastGitWriteAt = 0;

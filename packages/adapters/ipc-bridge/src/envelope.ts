@@ -68,7 +68,6 @@ export const RPC = {
   // 12 §F1.6/F2：终端（阶段 1 仅外部终端兜底；阶段 2 增加内嵌面板的 create/write/resize/kill）
   terminalOpenExternal: 'terminal.openExternal',
   gitOverview: 'git.overview',
-  gitCommitDirect: 'git.commitDirect',
   gitReviewList: 'git.reviewList',
   gitFileDiff: 'git.fileDiff',
   gitBranches: 'git.branches',

@@ -1,8 +1,9 @@
-import { mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
+import { mkdtemp, readFile, readdir, rm, writeFile } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { beforeEach, describe, expect, it } from 'vitest';
+import { CHECKPOINT_KEEP_TURNS } from '@loomery/domain';
 import { CheckpointService } from './checkpoint';
 
 let workspace = '';
@@ -76,5 +77,22 @@ describe('CheckpointService（07 §5 懒快照）', () => {
     expect(removed).toEqual(['t1']);
     expect(existsSync(service.snapshotPath('t1', join(workspace, 't1.txt')))).toBe(false);
     expect(existsSync(service.snapshotPath('t2', join(workspace, 't2.txt')))).toBe(true);
+  });
+
+  it('snapshot 自动滚动清理：新快照落地后仅保留最近 CHECKPOINT_KEEP_TURNS 个 Turn（11-17 接线）', async () => {
+    const file = join(workspace, 'auto.txt');
+    await writeFile(file, 'x', 'utf8');
+    for (let i = 1; i <= CHECKPOINT_KEEP_TURNS + 1; i++) {
+      await service.snapshot(`t${String(i).padStart(2, '0')}`, file);
+      // mtime 严格递增：保证 prune 按时间排序时当前 Turn 最新必被保留
+      await new Promise((r) => setTimeout(r, 15));
+    }
+    const dirs = (await readdir(snapshots)).filter((n) => existsSync(join(snapshots, n)));
+    expect(dirs.length).toBe(CHECKPOINT_KEEP_TURNS);
+    // 最旧的 Turn 已被自动清掉，当前 Turn 仍在
+    expect(existsSync(service.snapshotPath('t01', file))).toBe(false);
+    expect(existsSync(service.snapshotPath(`t${String(CHECKPOINT_KEEP_TURNS + 1).padStart(2, '0')}`, file))).toBe(true);
+    // 已清 Turn 的 restore 幂等返回空（不因缺失目录抛错）
+    expect(await service.restore('t01')).toEqual({ restored: [], failed: [] });
   });
 });

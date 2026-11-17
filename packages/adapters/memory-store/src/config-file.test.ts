@@ -1,5 +1,6 @@
 // JsonConfigStore 损坏容错测试（实证：并发写导致「新文档+旧尾」截断失败 → 启动直接死）
 import { mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
+import { existsSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterEach, describe, expect, it } from 'vitest';
@@ -87,5 +88,33 @@ describe('JsonConfigStore 损坏容错', () => {
     expect(cfg.workspaceRoots).toEqual(['E:/r1']);
     expect(cfg.models.entries?.[0]?.modelId).toBe('m');
     expect(cfg.restorePolicy).toBe('re-ask');
+  });
+
+  it('双窗口并发写实证：交错保存流下文件永不撕裂、双方末次写均落盘（11-17）', async () => {
+    const dir = await mk();
+    const p = join(dir, 'config.json');
+    // 双窗口 IPC 经单实例锁汇入主进程同一 ConfigStore 实例——写队列即竞态防线；
+    // 本测试模拟两股交错保存流（窗口 A 改 roots / 窗口 B 改 approval）+ 写进行中并发读
+    const store = new JsonConfigStore(p);
+    const winA = Array.from({ length: 10 }, (_, i) => store.save({ workspaceRoots: [`E:/ws/a${i}`] }));
+    const winB = Array.from({ length: 10 }, (_, i) => store.save({ approval: { read: 'auto', write: i % 2 ? 'ask' : 'auto', execute: 'deny' } }));
+    // 撕裂读探针：写进行中读文件，任何一次读到「新文档+旧尾」残缺态（JSON.parse 抛错）即失败。
+    // 疏读（6 次×5ms 间隔≈120ms）：Windows 单次读句柄占 ~14ms，重试窗口（10 次≈345ms）必须覆盖读存活期；
+    // 生产场景 load() 是偶发 RPC，同理单次占用远小于重试窗口
+    let reads = 0;
+    const reader = (async () => {
+      for (let i = 0; i < 6; i++) {
+        if (existsSync(p)) JSON.parse(await readFile(p, 'utf8'));
+        reads += 1;
+        await new Promise((r) => setTimeout(r, 5));
+      }
+    })();
+    await Promise.all([...winA, ...winB, reader]);
+    const cfg = await store.load();
+    // save() 同步入队 FIFO：A 末次(a9)/B 末次(b9, i=9→ask) 均落盘，中途补丁按序合并无丢失
+    expect(cfg.workspaceRoots).toEqual(['E:/ws/a9']);
+    expect(cfg.approval).toEqual({ read: 'auto', write: 'ask', execute: 'deny' });
+    expect(reads).toBe(6);
+    expect(existsSync(p + '.tmp')).toBe(false); // 原子 rename 后无残留临时文件
   });
 });

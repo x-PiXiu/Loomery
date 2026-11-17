@@ -33,8 +33,6 @@ export interface LoopState {
   seenToolCalls: Set<string>;
   /** 连续上下文哈希不变轮数 */
   contextHashStreak: number;
-  /** 降级收尾时置 true（禁用工具） */
-  toolsDisabled: boolean;
   budget: Budget;
   spent: BudgetSpent;
   /** 取消传播入口（07 §6） */
