@@ -27,6 +27,9 @@ export class RpcServer {
   }
 }
 
+/** main→渲染调用超时（与测试共用同一常量）：桥未注册（启动竞态/F5 重载窗口）时消息无人接收 */
+export const RENDERER_CALL_TIMEOUT_MS = 10_000;
+
 /** 主进程 → 渲染层的方法调用（EditorGateway 端口的传输载体） */
 export class MainCallInvoker {
   private readonly pending = new Map<string, { resolve: (v: unknown) => void; reject: (e: Error) => void }>();
@@ -47,7 +50,16 @@ export class MainCallInvoker {
     if (!target || target.isDestroyed()) return Promise.reject(new Error('渲染层不可用'));
     const id = randomUUID();
     return new Promise<T>((resolve, reject) => {
-      this.pending.set(id, { resolve: resolve as (v: unknown) => void, reject });
+      // 超时防线（11-17 基准集揪出）：桥未注册时 pending 永不归还 → assemble 的 provider
+      // await 永久挂起、任务卡 busy（实证 240s 零事件）。超时拒绝让 safeProvide 捕获后
+      // 降级（编辑器上下文缺省），迟到回执因 pending 已删被静默忽略。
+      const timer = setTimeout(() => {
+        if (this.pending.delete(id)) reject(new Error(`渲染层响应超时: ${channel}`));
+      }, RENDERER_CALL_TIMEOUT_MS);
+      this.pending.set(id, {
+        resolve: (v) => { clearTimeout(timer); resolve(v as T); },
+        reject: (e) => { clearTimeout(timer); reject(e); },
+      });
       target.send(CHANNELS.rpcMain, { v: 1, id, channel, payload } satisfies RpcEnvelope);
     });
   }
