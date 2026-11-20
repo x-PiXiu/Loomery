@@ -36,7 +36,7 @@ copy(path.join(pnpmDir, ptyEntry, 'node_modules/node-pty'), path.join(stage, 'sh
 const rootPkg = JSON.parse(fs.readFileSync(path.join(repo, 'package.json'), 'utf8'));
 fs.writeFileSync(
   path.join(stage, 'package.json'),
-  JSON.stringify({ name: 'loomery', productName: 'Loomery', version: rootPkg.version, main: 'shell/dist/main.js', private: true }, null, 2),
+  JSON.stringify({ name: 'loomery', productName: 'Loomery', version: rootPkg.version, author: rootPkg.author, type: 'module', main: 'shell/dist/main.js', private: true }, null, 2),
 );
 
 console.log(`staging 完成：${stage}`);

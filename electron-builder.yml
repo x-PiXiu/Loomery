@@ -19,10 +19,13 @@ asarUnpack:
 win:
   icon: release/stage/shell/resources/icon.ico
   target:
-    - target: dir   # 先产便携目录（--dir 等价）；nsis 安装器待签名证书接入后启用
+    - target: dir   # 便携目录（--dir 等价）；签名证书接入后启用 nsis/msi 双安装器
     - target: nsis
+    - target: msi   # 11-21 新增：MSI 企业安装包（WiX，per-machine）
 nsis:
   oneClick: false
   allowToChangeInstallationDirectory: true
   artifactName: Loomery-Setup-${version}.exe
+msi:
+  artifactName: Loomery-${version}.msi
 npmRebuild: false   # native 模块已预构建拷贝，不在打包机重编译
