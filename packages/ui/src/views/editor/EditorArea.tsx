@@ -2,6 +2,7 @@
 import { useEffect, useRef, useState, type ReactElement } from 'react';
 import Markdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import rehypeHighlight from 'rehype-highlight';
 import { Check, Columns2, Copy, GitCompare, ExternalLink, Eye, MoreHorizontal, X, ChevronsDown, FileCode2, FileText, FolderClosed, Globe, Maximize2, PictureInPicture2, Plus, Search, GitPullRequest, Terminal } from 'lucide-react';
 import { RPC } from '@loomery/adapter-ipc-bridge/envelope';
 import { bridge, rpc } from '@loomery/adapter-ipc-bridge/renderer';
@@ -799,7 +800,8 @@ ${sel}`);
         <div className="editor-stage">
         {showMdPreview ? (
           <div className="md-preview">
-            <Markdown remarkPlugins={[remarkGfm]}>{balanceFences(mdContent)}</Markdown>
+            {/* 11-21：rehype-highlight（highlight.js common 子集）给 md 代码块上语法色——仅 md 预览，聊天流 CodeShell 深色主题不变 */}
+            <Markdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeHighlight]}>{balanceFences(mdContent)}</Markdown>
           </div>
         ) : null}
         {activeEntry?.kind === 'image' ? (

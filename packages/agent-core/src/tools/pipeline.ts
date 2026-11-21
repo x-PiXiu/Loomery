@@ -159,6 +159,11 @@ export class ToolPipeline {
     }
 
     // ---- 5. 路径护栏（多根工作区，ADR-0013 绝对路径）----
+    // 11-21 首启未建项目（工作区为空）：给出可执行的第一步，而不是冷冰冰的“路径越界”
+    if (!ctx.workspaceRoots?.length && pathFields.length > 0) {
+      guard('pathOutside', '工作区为空（尚未创建项目）', 'blocked');
+      return fail('尚未创建任何项目——请先在侧边栏「新建项目」选择一个文件夹作为工作目录（agent 的文件操作以项目目录为领土），再发起需要读写文件的任务。');
+    }
     const outside = findOutsidePath(input, ctx.workspaceRoots, ctx.scratchRoot, pathFieldsOfSchema(tool.inputSchema));
     if (outside) {
       // 报错带出允许的根：否则 agent 只能逐个猜测（实测连试 4 轮全被拦，浪费步数）

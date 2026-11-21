@@ -463,8 +463,28 @@ html[data-theme='light'] .msg-assistant pre { background: #f7f7fa; }
 .md-preview ul, .md-preview ol { margin: 0 0 10px; padding-left: 22px; }
 .md-preview code { background: var(--bg-card); border: 1px solid var(--border); border-radius: 4px; padding: 0 5px; font-family: var(--mono); font-size: 12.5px; }
 .md-preview pre { background: #0e0e12; border: 1px solid var(--border); border-radius: 8px; padding: 12px; overflow: auto; }
-html[data-theme='light'] .md-preview pre { background: #f7f7fa; }
+html[data-theme='light'] .md-preview pre { background: #ffffff; border-color: #dde3ec; }
 .md-preview pre code { background: none; border: 0; padding: 0; }
+
+/* 11-21 md 预览语法高亮（rehype-highlight → hljs 类）：白底 + 双主题 token 色（github-light / one-dark 子集） */
+.md-preview pre code.hljs { background: transparent; padding: 0; display: block; }
+html[data-theme='light'] .md-preview .hljs-comment, html[data-theme='light'] .md-preview .hljs-quote { color: #6e7781; font-style: italic; }
+html[data-theme='light'] .md-preview .hljs-keyword, html[data-theme='light'] .md-preview .hljs-selector-tag, html[data-theme='light'] .md-preview .hljs-doctag, html[data-theme='light'] .md-preview .hljs-formula { color: #cf222e; }
+html[data-theme='light'] .md-preview .hljs-title, html[data-theme='light'] .md-preview .hljs-title.function_, html[data-theme='light'] .md-preview .hljs-section { color: #8250df; }
+html[data-theme='light'] .md-preview .hljs-string, html[data-theme='light'] .md-preview .hljs-regexp, html[data-theme='light'] .md-preview .hljs-addition { color: #0a3069; }
+html[data-theme='light'] .md-preview .hljs-number, html[data-theme='light'] .md-preview .hljs-literal, html[data-theme='light'] .md-preview .hljs-attr, html[data-theme='light'] .md-preview .hljs-variable, html[data-theme='light'] .md-preview .hljs-template-variable { color: #0550ae; }
+html[data-theme='light'] .md-preview .hljs-type, html[data-theme='light'] .md-preview .hljs-built_in, html[data-theme='light'] .md-preview .hljs-title.class_, html[data-theme='light'] .md-preview .hljs-class { color: #116329; }
+html[data-theme='light'] .md-preview .hljs-name, html[data-theme='light'] .md-preview .hljs-symbol, html[data-theme='light'] .md-preview .hljs-selector-id, html[data-theme='light'] .md-preview .hljs-selector-class { color: #953800; }
+html[data-theme='light'] .md-preview .hljs-meta, html[data-theme='light'] .md-preview .hljs-meta .hljs-keyword { color: #0550ae; }
+html[data-theme='light'] .md-preview .hljs-emphasis { font-style: italic; } html[data-theme='light'] .md-preview .hljs-strong { font-weight: 700; }
+html[data-theme='dark'] .md-preview .hljs-comment, html[data-theme='dark'] .md-preview .hljs-quote { color: #7f848e; font-style: italic; }
+html[data-theme='dark'] .md-preview .hljs-keyword, html[data-theme='dark'] .md-preview .hljs-selector-tag, html[data-theme='dark'] .md-preview .hljs-doctag, html[data-theme='dark'] .md-preview .hljs-formula { color: #c678dd; }
+html[data-theme='dark'] .md-preview .hljs-title, html[data-theme='dark'] .md-preview .hljs-title.function_, html[data-theme='dark'] .md-preview .hljs-section { color: #61afef; }
+html[data-theme='dark'] .md-preview .hljs-string, html[data-theme='dark'] .md-preview .hljs-regexp, html[data-theme='dark'] .md-preview .hljs-addition { color: #98c379; }
+html[data-theme='dark'] .md-preview .hljs-number, html[data-theme='dark'] .md-preview .hljs-literal, html[data-theme='dark'] .md-preview .hljs-attr, html[data-theme='dark'] .md-preview .hljs-variable, html[data-theme='dark'] .md-preview .hljs-template-variable { color: #d19a66; }
+html[data-theme='dark'] .md-preview .hljs-type, html[data-theme='dark'] .md-preview .hljs-built_in, html[data-theme='dark'] .md-preview .hljs-title.class_, html[data-theme='dark'] .md-preview .hljs-class { color: #e5c07b; }
+html[data-theme='dark'] .md-preview .hljs-name, html[data-theme='dark'] .md-preview .hljs-symbol { color: #e06c75; }
+html[data-theme='dark'] .md-preview .hljs-meta, html[data-theme='dark'] .md-preview .hljs-meta .hljs-keyword { color: #56b6c2; }
 .md-preview blockquote { margin: 0 0 10px; padding: 4px 14px; border-left: 3px solid var(--border-strong); color: var(--text-dim); }
 .md-preview table { border-collapse: collapse; margin: 0 0 8px; }
 .md-preview th, .md-preview td { border: 1px solid var(--border); padding: 3px 9px; }

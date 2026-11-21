@@ -11,3 +11,4 @@ export * from './json-schema';
 export * from './storage';
 export * from './budget';
 export * from './encoding';
+export * from './workspace';

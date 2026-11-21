@@ -6,7 +6,7 @@ import { cpSync, existsSync, mkdirSync, readFileSync, readdirSync, rmSync, statS
 import { readFile, writeFile } from 'node:fs/promises';
 import { dirname, join, normalize } from 'node:path';
 import { homedir } from 'node:os';
-import { COMPACTION_THRESHOLD_RATIO, decodeText, flattenProviders, isPathInsideWorkspace, type LoopEvent } from '@loomery/domain';
+import { COMPACTION_THRESHOLD_RATIO, decodeText, flattenProviders, isPathInsideWorkspace, isSystemDir, type LoopEvent } from '@loomery/domain';
 import {
   BriefProvider, ContextAssembler, FanoutSink, JournalSink, MemoryRecallProvider, SkillIndexProvider, ThreadService,
   ToolPipeline, ToolRegistry,
@@ -98,8 +98,8 @@ function readJson<T>(file: string, fallback: T): T {
   return existsSync(file) ? (JSON.parse(readFileSync(file, 'utf8')) as T) : fallback;
 }
 
-/** 默认工作区：从启动目录向上找"最高"的项目根——.git 优先，其次 pnpm-workspace.yaml，再次最高层 package.json（monorepo 子包不算项目） */
-function resolveDefaultWorkspace(startDir: string): string {
+/** 系统目录判定与清洗规则归 domain（rules/workspace.ts，可单测）；fs/homedir 副作用留本层 */
+function resolveDefaultWorkspace(startDir: string): string | null {
   let dir = startDir;
   let gitRoot: string | null = null;
   let workspaceRoot: string | null = null;
@@ -112,7 +112,11 @@ function resolveDefaultWorkspace(startDir: string): string {
     if (parent === dir) break;
     dir = parent;
   }
-  return gitRoot ?? workspaceRoot ?? bestPackageJson ?? startDir;
+  const result = gitRoot ?? workspaceRoot ?? bestPackageJson ?? null;
+  // 11-21：找不到任何项目标记 → 返回 null（不自动建项目）。此前兜底 startDir 把
+  // 安装目录/System32/家目录悄悄圈成 agent 领土（system32/Loomery 项目事故的根因）。
+  if (!result || isSystemDir(result)) return null;
+  return result;
 }
 
 /** 目录树忽略名单：依赖/构建产物/版本库/应用运行时数据（前者巨大且无阅读价值，后者会淹没真实源码树） */
@@ -151,8 +155,25 @@ export async function createRuntime(
   // ---- 配置与密钥 ----
   const configStore = new JsonConfigStore(join(userData, 'config.json'));
   const config: AppConfig = await configStore.load();
+  // 11-21：清洗历史遗留的系统目录工作区（旧安装版首启把 C:\Windows\System32 存成了项目）
+  // 清洗范围（11-21 扩展）：系统目录 + 应用安装目录自身（agent 可重写应用本体，绝不作为工作区）
+  const exeDir = normalize(dirname(app.getPath('exe'))).toLowerCase();
+  const isBadRoot = (r: string) => isSystemDir(r) || normalize(r).toLowerCase().startsWith(exeDir.toLowerCase());
+  const badRoots = config.workspaceRoots.filter(isBadRoot);
+  if (badRoots.length > 0) {
+    config.workspaceRoots = config.workspaceRoots.filter((r) => !isBadRoot(r));
+    console.warn('[config] 清洗无效工作区（系统目录/安装目录遗留）: ' + badRoots.join(', '));
+  }
   if (config.workspaceRoots.length === 0) {
-    config.workspaceRoots = [process.env.LOOMERY_WORKSPACE ?? resolveDefaultWorkspace(process.cwd())];
+    // 首启默认：LOOMERY_WORKSPACE（dev/E2E）> 启动目录处的真实项目根。
+    // 找不到项目根就不自动添加——空项目列表 + 引导「新建项目」，
+    // 绝不把安装目录/System32/家目录悄悄圈成 agent 领土（11-21 system32/Loomery 项目事故）
+    if (process.env.LOOMERY_WORKSPACE) {
+      config.workspaceRoots = [process.env.LOOMERY_WORKSPACE];
+    } else {
+      const auto = resolveDefaultWorkspace(process.cwd());
+      if (auto) config.workspaceRoots = [auto];
+    }
   }
   // E2E 模式：强制使用测试工作区（即使配置里已有其他根）
   if (process.env.LOOMERY_E2E_WORKSPACE) {
@@ -465,6 +486,10 @@ export async function createRuntime(
   rpc.handle(RPC.configGet, () => config);
   rpc.handle(RPC.configSave, async (patch) => {
     const incoming = (patch ?? {}) as Partial<AppConfig>;
+    if ((incoming as Record<string, unknown>).__onboardingStack) {
+      console.log('[configSave] patch=' + JSON.stringify(incoming).slice(0, 500));
+      delete (incoming as Record<string, unknown>).__onboardingStack;
+    }
     // 设置页供应商为中心：providers 变更时展平同步 entries（内核契约不变，ADR 设置重构）
     if (incoming.models && incoming.models.providers) {
       incoming.models = { ...incoming.models, entries: flattenProviders(incoming.models.providers) };
